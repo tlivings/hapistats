@@ -1,0 +1,15 @@
+{
+    "name": "hapistats",
+    "description": "Hapi plugin for request/response statistics and metrics.",
+    "author": "Trevor Livingston <trlivingston@paypal.com>",
+    "contributors": [
+        "Erik Toth <ertoth@paypal.com>"
+    ],
+    "version": "0.1.0",
+    "main": "index",
+    "dependencies": {
+    },
+    "peerDependencies": {
+        "hapi": "~1.11.x"
+    }
+}

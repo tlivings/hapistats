@@ -1,0 +1,4 @@
+{
+    "vhost": "localhost",
+    "path": "/-/stats"
+}
