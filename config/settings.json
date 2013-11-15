@@ -1,5 +1,6 @@
 {
     "vhost": "localhost",
     "levelport": "6000",
+    "os_stats": ["hostname", "loadavg", "totalmem", "freemem"],
     "path": "/-/stats"
 }
