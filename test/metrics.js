@@ -39,7 +39,7 @@ describe('metrics', function () {
         function makeRequest() {
             server.inject({
                 method: 'get',
-                url: 'http://localhost:3000/-/stats'
+                url: 'http://localhost:3000/-/metrics'
             }, function (res) {
                 assert.ok(res);
                 assert.strictEqual(200, res.statusCode);

@@ -1,6 +1,4 @@
 {
     "vhost": "localhost",
-    "metricsPort": "6000",
-    "os_stats": ["hostname", "loadavg", "totalmem", "freemem"],
-    "path": "/-/stats"
+    "path": "/-/metrics"
 }
