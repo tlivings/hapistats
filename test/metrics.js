@@ -12,15 +12,6 @@ describe('metrics', function () {
 
         server = new Hapi.Server();
 
-        server.route({
-            method: 'GET',
-            vhost: settings.vhost,
-            path: '/test',
-            handler: function (req) {
-                req.reply();
-            }
-        });
-
         server.pack.require('../', settings, function (err) {
             assert.ok(!err);
             next();
@@ -56,13 +47,13 @@ describe('metrics', function () {
         function done(res) {
             assert.ok(res.payload);
 
-            var metrics = JSON.parse(res.payload)['http.requests'];
+            var metrics = JSON.parse(res.payload);
 
-            assert.strictEqual(100, metrics.total.count);
-            assert.strictEqual(1, metrics.active.count);
-            assert.strictEqual(0, metrics.errors.count);
-            assert.strictEqual(100, metrics.perSecond.count);
-            //console.dir(metrics);
+            assert.strictEqual(100, metrics.total);
+            assert.strictEqual(1, metrics.active);
+            assert.strictEqual(0, metrics.errors);
+            assert.strictEqual(100, metrics.rps.count);
+
             next();
         }
 

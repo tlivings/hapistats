@@ -19,23 +19,24 @@ exports = module.exports = {
 
         metrics = require('./lib/metrics')(settings);
 
-        httpTotal = metrics.createCounter('http.requests.total');
-        httpActive = metrics.createCounter('http.requests.active');
-        httpErrors = metrics.createCounter('http.requests.errors');
-
-        rps = metrics.createMeter('http.requests.perSecond');
+        httpTotal = metrics.counter('total');
+        httpActive = metrics.counter('active');
+        httpErrors = metrics.counter('errors');
+        rps = metrics.meter('rps');
 
         plugin.route({
             method: 'GET',
             vhost: settings.vhost,
             path: settings.path,
-            handler: metrics.handler
+            handler: function (req) {
+                req.reply(metrics.toJSON());
+            }
         });
 
         plugin.ext('onRequest', function (req, next) {
+            rps.mark();
             httpTotal.inc();
             httpActive.inc();
-            rps.mark();
             next();
         });
 

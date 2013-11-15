@@ -1,4 +1,5 @@
 {
     "vhost": "localhost",
+    "port": "3000",
     "path": "/-/metrics"
 }
