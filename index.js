@@ -33,17 +33,17 @@ exports = module.exports = {
         });
 
         plugin.ext('onRequest', function (req, next) {
-            httpTotal.increment();
-            httpActive.increment();
+            httpTotal.inc();
+            httpActive.inc();
             rps.mark();
             next();
         });
 
         plugin.ext('onPreResponse', function (req, next) {
             var res = req.response();
-            httpActive.decrement();
+            httpActive.dec();
             if (res._code >= 500) {
-                httpErrors.increment();
+                httpErrors.inc();
             }
             next();
         });

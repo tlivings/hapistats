@@ -62,8 +62,7 @@ describe('metrics', function () {
             assert.strictEqual(1, metrics.active.count);
             assert.strictEqual(0, metrics.errors.count);
             assert.strictEqual(100, metrics.perSecond.count);
-
-            console.dir(metrics);
+            //console.dir(metrics);
             next();
         }
 
