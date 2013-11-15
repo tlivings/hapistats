@@ -11,7 +11,7 @@ exports = module.exports = {
     version: version,
 
     register: function (plugin, options, done) {
-        var hapi, settings, metrics;
+        var hapi, settings, metrics, httpTotal, httpActive, httpErrors, rps;
 
         hapi = plugin.hapi;
 
@@ -19,11 +19,11 @@ exports = module.exports = {
 
         metrics = require('./lib/metrics')(settings);
 
-        metrics.createCounter('http.requests.total');
-        metrics.createCounter('http.requests.active');
-        metrics.createCounter('http.requests.errors');
+        httpTotal = metrics.createCounter('http.requests.total');
+        httpActive = metrics.createCounter('http.requests.active');
+        httpErrors = metrics.createCounter('http.requests.errors');
 
-        metrics.createMeter('http.requests.perSecond');
+        rps = metrics.createMeter('http.requests.perSecond');
 
         plugin.route({
             method: 'GET',
@@ -33,17 +33,17 @@ exports = module.exports = {
         });
 
         plugin.ext('onRequest', function (req, next) {
-            metrics.increment('http.requests.total');
-            metrics.increment('http.requests.active');
-            metrics.mark('http.requests.perSecond');
+            httpTotal.increment();
+            httpActive.increment();
+            rps.mark();
             next();
         });
 
         plugin.ext('onPreResponse', function (req, next) {
             var res = req.response();
-            metrics.decrement('http.requests.active');
+            httpActive.decrement();
             if (res._code >= 500) {
-                metrics.increment('http.response.errors');
+                httpErrors.increment();
             }
             next();
         });
