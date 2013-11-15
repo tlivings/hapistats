@@ -1,9 +1,6 @@
 'use strict';
 
-var cluster = require('cluster'),
-    server = require('./lib/server').create(),
-    levelstats = require('./lib/levelstats'),
-    pkg = require('./package.json'),
+var pkg = require('./package.json'),
     name = pkg.name,
     version = pkg.version;
 
@@ -13,39 +10,44 @@ exports = module.exports = {
 
     version: version,
 
-    register: function (plugin, options, next) {
-        var hapi, settings, stats;
+    register: function (plugin, options, done) {
+        var hapi, settings, metrics;
 
         hapi = plugin.hapi;
 
         settings = hapi.utils.applyToDefaults(require('./config/settings.json'), options);
 
-        if (cluster.isMaster) {
-            server.listen(settings.levelport || 3000);
-        }
+        metrics = require('./lib/metrics')(settings);
 
-        stats = levelstats(settings);
+        metrics.createCounter('http.requests.total');
+        metrics.createCounter('http.requests.active');
+        metrics.createCounter('http.requests.errors');
+
+        metrics.createMeter('http.requests.perSecond');
 
         plugin.route({
             method: 'GET',
             vhost: settings.vhost,
             path: settings.path,
-            handler: stats.handler
+            handler: metrics.handler
         });
 
         plugin.ext('onRequest', function (req, next) {
-            stats.increment('requests.total');
-            stats.increment('requests.active');
+            metrics.increment('http.requests.total');
+            metrics.increment('http.requests.active');
+            metrics.mark('http.requests.perSecond');
             next();
         });
 
         plugin.ext('onPreResponse', function (req, next) {
             var res = req.response();
-            stats.decrement('requests.active');
+            metrics.decrement('http.requests.active');
             if (res._code >= 500) {
-                stats.increment('response.errors');
+                metrics.increment('http.response.errors');
             }
             next();
         });
+
+        done();
     }
 };
