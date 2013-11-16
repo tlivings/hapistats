@@ -54,7 +54,7 @@ describe('metrics', function () {
             });
         }
 
-        repeat(100, inject, function () {
+        function tabulate() {
             server.inject({
                 method: 'get',
                 url: 'http://localhost:3000/-/metrics'
@@ -75,8 +75,10 @@ describe('metrics', function () {
 
                 done();
             });
-        });
+        }
 
+        repeat(100, inject, tabulate);
+        
     });
 
 });
