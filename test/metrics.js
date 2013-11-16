@@ -7,14 +7,25 @@ var Hapi = require('hapi'),
 
 describe('metrics', function () {
 
-    var server, requests;
+    var server;
+
+    function repeat(count, fn, done) {
+        (function run(err, data) {
+            count -= 1;
+            if (!count) {
+                done(err, data);
+                return;
+            }
+            fn(run);
+        })();
+    }
+
 
     before(function (next) {
-
         server = new Hapi.Server();
 
         server.route({
-            method: 'GET',
+            method: 'get',
             path: '/test',
             handler: function (req) {
                 setTimeout(function () {
@@ -23,43 +34,29 @@ describe('metrics', function () {
             }
         });
 
-        server.pack.require('../', settings, function (err) {
-            assert.ok(!err);
-            next();
-        });
-
+        server.pack.require('../', settings, next);
     });
+
 
     after(function () {
         server.stop();
     });
 
-    function repeat(count, fn, done) {
-        var index = 0;
-        (function run(err, data) {
-            index += 1;
-            if (index === count) {
-                done(err, data);
-                return;
-            }
-            fn(run);
-        })();
-    }
-
-    function inject(done) {
-        server.inject({
-            method: 'get',
-            url: 'http://localhost:3000/test'
-        }, function (res) {
-            assert.ok(res);
-            assert.strictEqual(200, res.statusCode);
-            done();
-        });
-    }
 
     it('should increment counters', function (done) {
 
-        repeat(100, inject, function () {
+        function inject(done) {
+            server.inject({
+                method: 'get',
+                url: 'http://localhost:3000/test'
+            }, function (res) {
+                assert.ok(res);
+                assert.strictEqual(res.statusCode, 200);
+                done();
+            });
+        }
+
+        function tabulate() {
             server.inject({
                 method: 'get',
                 url: 'http://localhost:3000/-/metrics'
@@ -80,7 +77,9 @@ describe('metrics', function () {
 
                 done();
             });
-        });
+        }
+
+        repeat(100, inject, tabulate);
 
     });
 
