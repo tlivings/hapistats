@@ -1,7 +1,8 @@
+/*global describe:false, before:false, after:false, it:false*/
 'use strict';
 
 var Hapi = require('hapi'),
-    assert = require('assert'),
+    assert = require('chai').assert,
     settings = require('./settings.json');
 
 describe('metrics', function () {
@@ -16,7 +17,9 @@ describe('metrics', function () {
             method: 'GET',
             path: '/test',
             handler: function (req) {
-                req.reply('success').code(200);
+                setTimeout(function () {
+                    req.reply('success').code(200);
+                }, 5);
             }
         });
 
@@ -31,52 +34,52 @@ describe('metrics', function () {
         server.stop();
     });
 
-    it('should incremement counters', function (next) {
+    function repeat(count, fn, done) {
+        var index = 0;
+        (function complete(err, data) {
+            index += 1;
+            if (index === count) {
+                done(err, data);
+                return;
+            }
+            fn(complete);
+        })();
+    }
 
-        var count = 0;
+    function inject(done) {
+        server.inject({
+            method: 'get',
+            url: 'http://localhost:3000/test'
+        }, function (res) {
+            assert.ok(res);
+            assert.strictEqual(200, res.statusCode);
+            done();
+        });
+    }
 
-        function makeRequest() {
-            server.inject({
-                method: 'get',
-                url: 'http://localhost:3000/test'
-            }, function (res) {
-                assert.ok(res);
-                assert.strictEqual(200, res.statusCode);
+    it('should increment counters', function (done) {
 
-                if (++count < 99) {
-                    setTimeout(makeRequest);
-                }
-                else {
-                    done(res);
-                }
-            });
-        }
-
-        function done(res) {
-
+        repeat(100, inject, function () {
             server.inject({
                 method: 'get',
                 url: 'http://localhost:3000/-/metrics'
             }, function (res) {
-                assert.ok(res.payload);
+                var metrics;
 
-                var metrics = JSON.parse(res.payload);
-
-                //console.dir(metrics);
+                assert.ok(res.result);
+                metrics = res.result;
 
                 assert.strictEqual(100, metrics.total);
                 assert.strictEqual(1, metrics.active);
                 assert.strictEqual(0, metrics.errors);
                 assert.strictEqual(100, metrics.rps.count);
-                assert.strictEqual(1, metrics.rss.count);
-                assert.strictEqual(1, metrics.heapTotal.count);
-                assert.strictEqual(1, metrics.heapUsed.count);
+                assert.isNumber(metrics.rss);
+                assert.isNumber(metrics.heapTotal);
+                assert.isNumber(metrics.heapUsed);
 
-                next();
+                done();
             });
-        }
-
-        makeRequest();
+        });
     });
 
 });

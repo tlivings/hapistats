@@ -1,19 +1,22 @@
 {
-    "name": "hapistats",
-    "description": "Hapi plugin for request/response statistics and metrics.",
-    "author": "Trevor Livingston <trlivingston@paypal.com>",
-    "contributors": [
-        "Erik Toth <ertoth@paypal.com>"
-    ],
-    "version": "0.1.0",
-    "main": "index",
-    "dependencies": {
-        "measured": "~0.1.x"
-    },
-    "devDependencies": {
-        "hapi": "~1.11.x"
-    },
-    "peerDependencies": {
-        "hapi": "~1.11.x"
-    }
+  "name": "hapistats",
+  "description": "Hapi plugin for request/response statistics and metrics.",
+  "author": "Trevor Livingston <trlivingston@paypal.com>",
+  "contributors": [
+    "Erik Toth <ertoth@paypal.com>"
+  ],
+  "version": "0.1.0",
+  "main": "index",
+  "dependencies": {
+    "measured": "~0.1.x",
+    "continuation-local-storage": "~2.5.2"
+  },
+  "devDependencies": {
+    "hapi": "~1.11.x",
+    "mocha": "~1.14.0",
+    "chai": "~1.8.1"
+  },
+  "peerDependencies": {
+    "hapi": "~1.11.x"
+  }
 }

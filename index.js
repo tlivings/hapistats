@@ -14,9 +14,7 @@ exports = module.exports = {
         var hapi, settings, metrics, httpTotal, httpActive, httpErrors, rps, rss, heapTotal, heapUsed;
 
         hapi = plugin.hapi;
-
         settings = hapi.utils.applyToDefaults(require('./config/settings.json'), options);
-
         metrics = require('./lib/metrics')(settings);
 
         httpTotal = metrics.counter('total');
@@ -24,22 +22,20 @@ exports = module.exports = {
         httpErrors = metrics.counter('errors');
         rps = metrics.meter('rps');
 
-        rss = metrics.histogram('rss');
-        heapTotal = metrics.histogram('heapTotal');
-        heapUsed = metrics.histogram('heapUsed');
+        rss = metrics.gauge('rss', function () {
+            return process.memoryUsage().rss;
+        });
 
-        function calculateMemory() {
-            var memory = process.memoryUsage();
-            rss.update(memory.rss);
-            heapTotal.update(memory.heapTotal);
-            heapUsed.update(memory.heapUsed);
-            setTimeout(calculateMemory, settings.memoryInterval || 10000);
-        }
+        heapTotal = metrics.gauge('heapTotal', function () {
+            return process.memoryUsage().rss;
+        });
 
-        calculateMemory();
+        heapUsed = metrics.gauge('heapUsed', function () {
+            return process.memoryUsage().rss;
+        });
 
         plugin.route({
-            method: 'GET',
+            method: 'get',
             vhost: settings.vhost,
             path: settings.path,
             handler: function (req) {
@@ -48,9 +44,15 @@ exports = module.exports = {
         });
 
         plugin.ext('onRequest', function (req, next) {
+            var timer;
+
             rps.mark();
             httpTotal.inc();
             httpActive.inc();
+
+            timer = (metrics.timer('request')).start();
+            req.raw.res.on('finish', timer.end.bind(timer));
+
             next();
         });
 
