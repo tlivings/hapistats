@@ -36,13 +36,13 @@ describe('metrics', function () {
 
     function repeat(count, fn, done) {
         var index = 0;
-        (function complete(err, data) {
+        (function run(err, data) {
             index += 1;
             if (index === count) {
                 done(err, data);
                 return;
             }
-            fn(complete);
+            fn(run);
         })();
     }
 
@@ -73,6 +73,7 @@ describe('metrics', function () {
                 assert.strictEqual(1, metrics.active);
                 assert.strictEqual(0, metrics.errors);
                 assert.strictEqual(100, metrics.rps.count);
+                assert.isObject(metrics.walltime);
                 assert.isNumber(metrics.rss);
                 assert.isNumber(metrics.heapTotal);
                 assert.isNumber(metrics.heapUsed);
@@ -80,6 +81,7 @@ describe('metrics', function () {
                 done();
             });
         });
+
     });
 
 });
