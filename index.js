@@ -11,7 +11,7 @@ exports = module.exports = {
     version: version,
 
     register: function (plugin, options, done) {
-        var hapi, settings, metrics, httpTotal, httpActive, httpErrors, rps;
+        var hapi, settings, metrics, httpTotal, httpActive, httpErrors, rps, rss, heapTotal, heapUsed;
 
         hapi = plugin.hapi;
 
@@ -23,6 +23,20 @@ exports = module.exports = {
         httpActive = metrics.counter('active');
         httpErrors = metrics.counter('errors');
         rps = metrics.meter('rps');
+
+        rss = metrics.histogram('rss');
+        heapTotal = metrics.histogram('heapTotal');
+        heapUsed = metrics.histogram('heapUsed');
+
+        function calculateMemory() {
+            var memory = process.memoryUsage();
+            rss.update(memory.rss);
+            heapTotal.update(memory.heapTotal);
+            heapUsed.update(memory.heapUsed);
+            setTimeout(calculateMemory, 10000);
+        }
+
+        calculateMemory();
 
         plugin.route({
             method: 'GET',
