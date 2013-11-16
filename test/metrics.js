@@ -7,38 +7,12 @@ var Hapi = require('hapi'),
 
 describe('metrics', function () {
 
-    var server, requests;
-
-    before(function (next) {
-
-        server = new Hapi.Server();
-
-        server.route({
-            method: 'GET',
-            path: '/test',
-            handler: function (req) {
-                setTimeout(function () {
-                    req.reply('success').code(200);
-                }, 5);
-            }
-        });
-
-        server.pack.require('../', settings, function (err) {
-            assert.ok(!err);
-            next();
-        });
-
-    });
-
-    after(function () {
-        server.stop();
-    });
+    var server;
 
     function repeat(count, fn, done) {
-        var index = 0;
         (function run(err, data) {
-            index += 1;
-            if (index === count) {
+            count -= 1;
+            if (!count) {
                 done(err, data);
                 return;
             }
@@ -46,18 +20,39 @@ describe('metrics', function () {
         })();
     }
 
-    function inject(done) {
-        server.inject({
+
+    before(function (next) {
+        server = new Hapi.Server();
+        server.pack.require('../', settings, next);
+        server.route({
             method: 'get',
-            url: 'http://localhost:3000/test'
-        }, function (res) {
-            assert.ok(res);
-            assert.strictEqual(200, res.statusCode);
-            done();
+            path: '/test',
+            handler: function (req) {
+                setTimeout(function () {
+                    req.reply('success').code(200);
+                }, 5);
+            }
         });
-    }
+    });
+
+
+    after(function () {
+        server.stop();
+    });
+
 
     it('should increment counters', function (done) {
+
+        function inject(done) {
+            server.inject({
+                method: 'get',
+                url: 'http://localhost:3000/test'
+            }, function (res) {
+                assert.ok(res);
+                assert.strictEqual(res.statusCode, 200);
+                done();
+            });
+        }
 
         repeat(100, inject, function () {
             server.inject({
