@@ -1,4 +1,4 @@
 {
-    "vhost": "localhost",
-    "path": "/-/metrics"
+    "path": "/-/metrics",
+    "memoryInterval": "10000"
 }

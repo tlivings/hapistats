@@ -1,5 +1,5 @@
 {
-    "vhost": "localhost",
     "port": "3000",
-    "path": "/-/metrics"
+    "path": "/-/metrics",
+    "memoryInterval": "10000"
 }

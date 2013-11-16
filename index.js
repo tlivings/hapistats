@@ -33,7 +33,7 @@ exports = module.exports = {
             rss.update(memory.rss);
             heapTotal.update(memory.heapTotal);
             heapUsed.update(memory.heapUsed);
-            setTimeout(calculateMemory, 10000);
+            setTimeout(calculateMemory, settings.memoryInterval || 10000);
         }
 
         calculateMemory();
