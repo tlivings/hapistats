@@ -23,7 +23,7 @@ describe('metrics', function () {
 
     before(function (next) {
         server = new Hapi.Server();
-        server.pack.require('../', settings, next);
+
         server.route({
             method: 'get',
             path: '/test',
@@ -33,6 +33,8 @@ describe('metrics', function () {
                 }, 5);
             }
         });
+
+        server.pack.require('../', settings, next);
     });
 
 
@@ -78,7 +80,7 @@ describe('metrics', function () {
         }
 
         repeat(100, inject, tabulate);
-        
+
     });
 
 });
