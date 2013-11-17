@@ -27,11 +27,11 @@ exports = module.exports = {
         });
 
         heapTotal = metrics.gauge('heapTotal', function () {
-            return process.memoryUsage().rss;
+            return process.memoryUsage().heapTotal;
         });
 
         heapUsed = metrics.gauge('heapUsed', function () {
-            return process.memoryUsage().rss;
+            return process.memoryUsage().heapUsed;
         });
 
         plugin.route({
