@@ -20,7 +20,6 @@ describe('metrics', function () {
         })();
     }
 
-
     before(function (next) {
         server = new Hapi.Server();
 

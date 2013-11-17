@@ -1,6 +1,7 @@
 'use strict';
 
-var pkg = require('./package.json'),
+var measured = require('./lib/measured'),
+    pkg = require('./package.json'),
     name = pkg.name,
     version = pkg.version;
 
@@ -15,7 +16,7 @@ exports = module.exports = {
 
         hapi = plugin.hapi;
         settings = hapi.utils.applyToDefaults(require('./config/settings.json'), options);
-        metrics = require('./lib/metrics')(settings);
+        metrics = measured.create(options);
 
         httpTotal = metrics.counter('total');
         httpActive = metrics.counter('active');
@@ -57,9 +58,8 @@ exports = module.exports = {
         });
 
         plugin.ext('onPreResponse', function (req, next) {
-            var res = req.response();
             httpActive.dec();
-            if (res._code >= 500) {
+            if (req.response()._code >= 500) {
                 httpErrors.inc();
             }
             next();

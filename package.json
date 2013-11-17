@@ -9,7 +9,8 @@
   "main": "index",
   "dependencies": {
     "measured": "~0.1.x",
-    "continuation-local-storage": "~2.5.2"
+    "continuation-local-storage": "~2.5.2",
+    "lynx": "0.0.11"
   },
   "devDependencies": {
     "hapi": "~1.11.x",
