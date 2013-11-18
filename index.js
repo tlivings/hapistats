@@ -1,6 +1,7 @@
 'use strict';
 
 var measured = require('./lib/measured'),
+    statsd = require('./lib/statsd'),
     pkg = require('./package.json'),
     name = pkg.name,
     version = pkg.version;
@@ -16,7 +17,11 @@ exports = module.exports = {
 
         hapi = plugin.hapi;
         settings = hapi.utils.applyToDefaults(require('./config/settings.json'), options);
+
         metrics = measured.create(settings);
+        if (typeof settings.statsd === 'object') {
+            metrics = statsd.create(metrics, settings.statsd);
+        }
 
         httpTotal = metrics.counter('total');
         httpActive = metrics.counter('active');
