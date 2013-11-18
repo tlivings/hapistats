@@ -9,7 +9,8 @@
   "main": "index",
   "dependencies": {
     "measured": "~0.1.x",
-    "lynx": "0.0.11"
+      "lynx" : "0.0.11",
+      "zmq" : "~2.5.0"
   },
   "devDependencies": {
     "hapi": "~1.11.x",
