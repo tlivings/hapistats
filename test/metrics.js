@@ -69,8 +69,8 @@ describe('metrics', function () {
                 assert.strictEqual(metrics.active, 1);
                 assert.strictEqual(metrics.errors, undefined);
                 assert.strictEqual(metrics.rps.count, 99);
+                assert.isObject(metrics.walltime);
                 /*
-                 assert.isObject(metrics.walltime);
                 assert.isNumber(metrics.rss);
                 assert.isNumber(metrics.heapTotal);
                 assert.isNumber(metrics.heapUsed);

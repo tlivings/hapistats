@@ -51,7 +51,7 @@ exports = module.exports = {
             httpTotal.inc();
             httpActive.inc();
 
-            timer = (metrics.timer('walltime')).start();
+            timer = (metrics.timer('walltime'));
             req.raw.res.on('finish', timer.end.bind(timer));
 
             next();
