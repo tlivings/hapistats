@@ -10,7 +10,7 @@
   "dependencies": {
     "measured": "~0.1.x",
       "lynx" : "0.0.11",
-      "zmqsi": "git://github.com/tlivings/zmqsi.git"
+      "service0": "git://github.com/tlivings/service0.git"
   },
   "devDependencies": {
     "hapi": "~1.11.x",
