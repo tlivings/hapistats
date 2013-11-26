@@ -16,7 +16,7 @@ exports = module.exports = {
 
         hapi = plugin.hapi;
         settings = hapi.utils.applyToDefaults(require('./config/settings.json'), options);
-        metrics = measured.create(settings);
+        metrics = measured(settings);
 
         httpTotal = metrics.counter('total');
         httpActive = metrics.counter('active');
@@ -40,7 +40,7 @@ exports = module.exports = {
             vhost: settings.vhost,
             path: settings.path,
             handler: function (req) {
-                req.reply(metrics.toJSON());
+                metrics.toJSON(req.reply.bind(req));
             }
         });
 

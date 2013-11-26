@@ -66,9 +66,9 @@ describe('metrics', function () {
                 metrics = res.result;
 
                 assert.strictEqual(metrics.total, 99);
-                assert.strictEqual(metrics.active, 1);
+                assert.strictEqual(metrics.active, 0);
                 assert.strictEqual(metrics.errors, undefined);
-                assert.strictEqual(metrics.rps.count, 99);
+                assert.strictEqual(metrics.rps.count, 100);
                 assert.isObject(metrics.walltime);
                 /*
                 assert.isNumber(metrics.rss);
