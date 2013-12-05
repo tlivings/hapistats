@@ -19,6 +19,7 @@ exports = module.exports = {
         settings = hapi.utils.applyToDefaults(require('./config/settings.json'), options);
 
         metrics = measured.create(settings);
+
         if (typeof settings.statsd === 'object') {
             metrics = statsd.create(metrics, settings.statsd);
         }
