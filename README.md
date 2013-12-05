@@ -8,8 +8,7 @@ Add this plugin to your [Hapi Composer Manifest](http://spumko.github.io/resourc
 
 ### Configuration
 
-`path` route path for metrics dump.
-`memoryInterval` the interval (milliseconds) in which to collect memory histograms.
+`path` http route path for metrics data.
 
 ### Viewing
 
