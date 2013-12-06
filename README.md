@@ -16,10 +16,10 @@ Example:
 
 ```json
 {
-    "host": 'localhost',
+    "host": "localhost",
     "port": 8125,
     "interval": 5000,
-    "scope": ''
+    "scope": ""
 }
 ```
 
