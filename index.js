@@ -50,7 +50,7 @@ exports = module.exports = {
             }
         });
 
-        plugin.ext('onRequest', function (req, next) {
+        plugin.ext('onPreHandler', function (req, next) {
             var timer;
 
             rps.mark();
